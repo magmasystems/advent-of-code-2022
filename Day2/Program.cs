@@ -2,10 +2,17 @@
 {
     internal static class Program
     {
+        private enum Weapon
+        {
+            Rock = 0,
+            Paper = 1,
+            Scissor = 2
+        }
+    
         private class Round
         {
-            public int Them { get; init; }
-            public int Me { get; init; }
+            public Weapon Them { get; init; }
+            public Weapon Me { get; init; }
         }
 
         private static void Main(string[] args)
@@ -15,7 +22,7 @@
             foreach (var line in input)
             {
                 var parts = line.Split(' ');
-                listOfRounds.Add(new Round { Them = parts[0][0] - 'A', Me = parts[1][0] - 'X' });  // normalize each weapon to 0
+                listOfRounds.Add(new Round { Them = (Weapon) parts[0][0] - 'A', Me = (Weapon) parts[1][0] - 'X' });  // normalize each weapon to 0
             }
             
             Console.WriteLine($"Part 1: The total score is {PlayRound(listOfRounds)}");   // 14297
@@ -30,26 +37,26 @@
         private static int PlayRound2(IEnumerable<Round> listOfRounds)
         {
             // DesiredOutcome: X = lose, Y = draw, Z = win
-            Dictionary<int, List<int>> MapDesiredOutcomeToWeapon = new()
+            Dictionary<Weapon, List<Weapon>> MapDesiredOutcomeToWeapon = new()
             {
-                { 0, new List<int> { 2, 0, 1 } },  // they have rock
-                { 1, new List<int> { 0, 1, 2 } },  // they have paper
-                { 2, new List<int> { 1, 2, 0 } },  // they have scissors
+                { Weapon.Rock,    new List<Weapon> { Weapon.Scissor, Weapon.Rock,    Weapon.Paper   } },  // they have rock
+                { Weapon.Paper,   new List<Weapon> { Weapon.Rock,    Weapon.Paper,   Weapon.Scissor } },  // they have paper
+                { Weapon.Scissor, new List<Weapon> { Weapon.Paper,   Weapon.Scissor, Weapon.Rock    } },  // they have scissors
             };
 
-            return listOfRounds.Sum(round => PlayOne(MapDesiredOutcomeToWeapon[round.Them][round.Me], round.Them));
+            return listOfRounds.Sum(round => PlayOne(MapDesiredOutcomeToWeapon[round.Them][(int) round.Me], round.Them));
         }
 
-        private static int PlayOne(int myWeapon, int theirWeapon)
+        private static int PlayOne(Weapon myWeapon, Weapon theirWeapon)
         {
             int score;
             if (myWeapon == theirWeapon)
             {
                 score = 3; // same weapon
             }
-            else if (myWeapon == 0 && theirWeapon == 2 || // rock defeats scissors
-                     myWeapon == 1 && theirWeapon == 0 || // paper defeats rock
-                     myWeapon == 2 && theirWeapon == 1)   // scissors defeats paper
+            else if (myWeapon == Weapon.Rock && theirWeapon == Weapon.Scissor ||  // rock defeats scissors
+                     myWeapon == Weapon.Paper && theirWeapon == Weapon.Rock   ||  // paper defeats rock
+                     myWeapon == Weapon.Scissor && theirWeapon == Weapon.Paper)   // scissors defeats paper
             {
                 score = 6;
             }
@@ -58,7 +65,7 @@
                 score = 0; // they beat me
             }
 
-            score += myWeapon + 1;
+            score += (int) myWeapon + 1;
             return score;
         }
     }
