@@ -11,24 +11,20 @@ namespace AdventOfCode2022
             var input = File.ReadAllLines(args.Length > 0 ? args[0] : "Input.txt");
 
             // This is part 1
-            var sumOfPriorities = input.Select(line => CalculatePriority(new[] { line[..(line.Length / 2)], line[(line.Length / 2)..] }, 0, 2)).Sum();
+            var sumOfPriorities = input.Select(line => CalculatePriority(new[] { line[..(line.Length / 2)], line[(line.Length / 2)..] })).Sum();
             Console.WriteLine($"Part 1: The sum of priorities is {sumOfPriorities}"); // 8401
 
             // This is part 2
-            sumOfPriorities = 0;
-            for (var idxLine = 0; idxLine < input.Length; idxLine += 3)
-            {
-                sumOfPriorities += CalculatePriority(input, idxLine, 3);
-            }
+            sumOfPriorities = input.Chunk(3).Select(CalculatePriority).Sum(priority => priority);
             Console.WriteLine($"Part 2: The sum of priorities is {sumOfPriorities}"); // 2641
         }
 
-        private static int CalculatePriority(string[] input, int startingIndex, int chunkSize)
+        private static int CalculatePriority(IList<string> input)
         {
-            var maps = new BitArray[chunkSize];
+            var maps = new BitArray[input.Count];
             for (var i = 0; i < maps.Length; i++)
             {
-                maps[i] = input[startingIndex + i].CreateCharMap();
+                maps[i] = input[i].CreateCharMap();
             }
 
             // Note: I probably could have used a single map in the solution, but I like and'ing chains of maps
