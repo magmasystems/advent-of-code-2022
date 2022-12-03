@@ -16,4 +16,15 @@ public static class BitArrayUtils
 
         return -1;
     }
+
+    public static BitArray And(this BitArray[] bitArrays)
+    {
+        var resultMap = new BitArray(bitArrays[0].Length, true);
+        foreach (var bitArray in bitArrays)
+        {
+            resultMap = resultMap.And(bitArray);
+        }
+
+        return resultMap;
+    }
 }

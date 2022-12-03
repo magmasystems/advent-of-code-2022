@@ -15,14 +15,9 @@ namespace AdventOfCode2022
             var input = File.ReadAllLines(args.Length > 0 ? args[0] : "Input.txt");
             foreach (var line in input)
             {
-                var map = new BitArray(52);
                 var halves = new[] { line[..(line.Length / 2)], line[(line.Length / 2)..] };
 
-                foreach (var chIndex in halves[0].Select(CharToIndex))
-                {
-                    map.Set(chIndex, true);
-                }
-
+                var map = halves[0].CreateCharMap();
                 foreach (var chIndex in halves[1].Select(CharToIndex))
                 {
                     if (map[chIndex])
@@ -43,19 +38,14 @@ namespace AdventOfCode2022
             sumOfPriorities = 0;
             for (var idxLine = 0; idxLine < input.Length && !string.IsNullOrEmpty(input[idxLine]); idxLine += 3)
             {
-                var map = new BitArray[3];
-
+                var maps = new BitArray[3];
                 for (var idxElf = 0; idxElf < 3; idxElf++)
                 {
-                    map[idxElf] = new BitArray(52);
-                    foreach (var chIndex in input[idxLine + idxElf].Select(CharToIndex))
-                    {
-                        map[idxElf].Set(chIndex, true);
-                    }
+                    maps[idxElf] = input[idxLine + idxElf].CreateCharMap();
                 }
 
                 // Note: I probably could have used a single map in the solution, but I like and'ing chains of maps
-                var resultMap = map[0].And(map[1]).And(map[2]);
+                var resultMap = maps.And();
 
                 // Find the first entry that is non-zero
                 var idxNonZero = resultMap.FindIndexOf(element => element);
@@ -64,6 +54,17 @@ namespace AdventOfCode2022
             }
 
             Console.WriteLine($"Part 2: The sum of priorities is {sumOfPriorities}"); // 2641
+        }
+
+        private static BitArray CreateCharMap(this string line)
+        {
+            var map = new BitArray(52);
+            foreach (var chIndex in line.Select(CharToIndex))
+            {
+                map.Set(chIndex, true);
+            }
+
+            return map;
         }
     }
 }
