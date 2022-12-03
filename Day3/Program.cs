@@ -15,11 +15,6 @@ namespace AdventOfCode2022
             var input = File.ReadAllLines(args.Length > 0 ? args[0] : "Input.txt");
             foreach (var line in input)
             {
-                if (string.IsNullOrEmpty(line))
-                {
-                    break;
-                }
-
                 var map = new BitArray(52);
                 var halves = new[] { line[..(line.Length / 2)], line[(line.Length / 2)..] };
 
