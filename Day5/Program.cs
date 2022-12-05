@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Concurrent;
+using System.Text.RegularExpressions;
 
 namespace AdventOfCode2022
 {
@@ -14,7 +15,7 @@ namespace AdventOfCode2022
         private static void Main(string[] args)
         {
             var stacks = new List<Stack<char>>();    // Stacks used for part 1
-            var stacks2 = new List<Stack<char>>();   // An exact clone of the stacks used in part 1, but this is for part 2
+            var stacks2 = new List<ConcurrentStack<char>>();   // An exact clone of the stacks used in part 1, but this is for part 2
             var directions = new List<Direction>();  // The list of directions for the rearrangement
             var lineNumberOfBottomOfStack = 0;
             var rearrangementSection = false;
@@ -41,7 +42,7 @@ namespace AdventOfCode2022
                     foreach (var _ in Enumerable.Range(0, parts.Length))
                     {
                         stacks.Add(new Stack<char>());
-                        stacks2.Add(new Stack<char>());
+                        stacks2.Add(new ConcurrentStack<char>());
                     }
                 }
 
@@ -90,16 +91,9 @@ namespace AdventOfCode2022
             foreach (var direction in directions)
             {
                 // Use a temporary list to hold the reverse order of the popping
-                var temp = new List<char>(direction.Quantity);
-                foreach (var _ in Enumerable.Range(0, direction.Quantity))
-                {
-                    temp.Insert(0, stacks2[direction.Source - 1].Pop());  // [D][N][Z] => { Z N D }
-                }
-
-                foreach (var ch in temp)
-                {
-                    stacks2[direction.Dest - 1].Push(ch);
-                }
+                var temp = new char[direction.Quantity];
+                stacks2[direction.Source - 1].TryPopRange(temp, 0, direction.Quantity);  // [D][N][Z] => { Z N D }
+                stacks2[direction.Dest - 1].PushRange(temp.Reverse().ToArray());
             }
 
             // Create the messages by looking at the top container in each stack
@@ -108,6 +102,20 @@ namespace AdventOfCode2022
         }
 
         private static string TopOfStacksToMessage(List<Stack<char>> stacks)
+        {
+            var message = string.Empty;
+            foreach (var stack in stacks)
+            {
+                if (stack.TryPeek(out var ch))
+                {
+                    message += ch;
+                }
+            }
+
+            return message;
+        }
+        
+        private static string TopOfStacksToMessage(List<ConcurrentStack<char>> stacks)
         {
             var message = string.Empty;
             foreach (var stack in stacks)
