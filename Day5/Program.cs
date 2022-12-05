@@ -7,14 +7,14 @@ namespace AdventOfCode2022
     {
         private class Direction
         {
-            public int Quantity { get; set; }
-            public int Source { get; set; }
-            public int Dest { get; set; }
+            public int Quantity { get; init; }
+            public int Source { get; init; }
+            public int Dest { get; init; }
         }
         
         private static void Main(string[] args)
         {
-            var stacks = new List<Stack<char>>();    // Stacks used for part 1
+            var stacks = new List<ConcurrentStack<char>>();    // Stacks used for part 1
             var stacks2 = new List<ConcurrentStack<char>>();   // An exact clone of the stacks used in part 1, but this is for part 2
             var directions = new List<Direction>();  // The list of directions for the rearrangement
             var lineNumberOfBottomOfStack = 0;
@@ -41,7 +41,7 @@ namespace AdventOfCode2022
                     var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                     foreach (var _ in Enumerable.Range(0, parts.Length))
                     {
-                        stacks.Add(new Stack<char>());
+                        stacks.Add(new ConcurrentStack<char>());
                         stacks2.Add(new ConcurrentStack<char>());
                     }
                 }
@@ -84,7 +84,8 @@ namespace AdventOfCode2022
             // Part1
             foreach (var direction in from direction in directions from _ in Enumerable.Range(0, direction.Quantity) select direction)
             {
-                stacks[direction.Dest - 1].Push(stacks[direction.Source - 1].Pop());
+                stacks[direction.Source - 1].TryPop(out var ch);
+                stacks[direction.Dest - 1].Push(ch);
             }
             
             // Part2
@@ -101,20 +102,6 @@ namespace AdventOfCode2022
             Console.WriteLine($"Part 2: The message is {TopOfStacksToMessage(stacks2)}");  // BQDNWJPVJ
         }
 
-        private static string TopOfStacksToMessage(List<Stack<char>> stacks)
-        {
-            var message = string.Empty;
-            foreach (var stack in stacks)
-            {
-                if (stack.TryPeek(out var ch))
-                {
-                    message += ch;
-                }
-            }
-
-            return message;
-        }
-        
         private static string TopOfStacksToMessage(List<ConcurrentStack<char>> stacks)
         {
             var message = string.Empty;
