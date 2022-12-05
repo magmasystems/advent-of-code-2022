@@ -80,26 +80,22 @@ namespace AdventOfCode2022
             #endregion
 
             // Execute the moving of the containers
+            MoveItemsBetweenStacks(stacks, directions);
+            Console.WriteLine($"Part 1: The message is {TopOfStacksToMessage(stacks)}");   // QPJPLMNNR
             
-            // Part1
-            foreach (var direction in from direction in directions from _ in Enumerable.Range(0, direction.Quantity) select direction)
-            {
-                stacks[direction.Source - 1].TryPop(out var ch);
-                stacks[direction.Dest - 1].Push(ch);
-            }
-            
-            // Part2
+            MoveItemsBetweenStacks(stacks2, directions, true);
+            Console.WriteLine($"Part 2: The message is {TopOfStacksToMessage(stacks2)}");  // BQDNWJPVJ
+        }
+
+        private static void MoveItemsBetweenStacks(IReadOnlyList<ConcurrentStack<char>> stacks, List<Direction> directions, bool grabMultiple = false)
+        {
             foreach (var direction in directions)
             {
                 // Use a temporary list to hold the reverse order of the popping
                 var temp = new char[direction.Quantity];
-                stacks2[direction.Source - 1].TryPopRange(temp, 0, direction.Quantity);  // [D][N][Z] => { Z N D }
-                stacks2[direction.Dest - 1].PushRange(temp.Reverse().ToArray());
+                stacks[direction.Source - 1].TryPopRange(temp, 0, direction.Quantity); // [D][N][Z] => { Z N D }
+                stacks[direction.Dest - 1].PushRange(grabMultiple ? temp.Reverse().ToArray() : temp.ToArray());
             }
-
-            // Create the messages by looking at the top container in each stack
-            Console.WriteLine($"Part 1: The message is {TopOfStacksToMessage(stacks)}");   // QPJPLMNNR
-            Console.WriteLine($"Part 2: The message is {TopOfStacksToMessage(stacks2)}");  // BQDNWJPVJ
         }
 
         private static string TopOfStacksToMessage(List<ConcurrentStack<char>> stacks)
