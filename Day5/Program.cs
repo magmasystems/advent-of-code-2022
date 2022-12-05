@@ -13,11 +13,13 @@ namespace AdventOfCode2022
         
         private static void Main(string[] args)
         {
-            var stacks = new List<Stack<char>>();
-            var directions = new List<Direction>();
+            var stacks = new List<Stack<char>>();    // Stacks used for part 1
+            var stacks2 = new List<Stack<char>>();   // An exact clone of the stacks used in part 1, but this is for part 2
+            var directions = new List<Direction>();  // The list of directions for the rearrangement
             var lineNumberOfBottomOfStack = 0;
             var rearrangementSection = false;
             
+            #region Parse the Input
             // move 1 from 2 to 1
             var regexMove = new Regex(@"^move (?<quantity>\d+) from (?<sourceStack>\d+) to (?<destStack>\d+)$");
             
@@ -37,7 +39,10 @@ namespace AdventOfCode2022
                     lineNumberOfBottomOfStack = lineNum - 1;
                     var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                     foreach (var _ in Enumerable.Range(0, parts.Length))
+                    {
                         stacks.Add(new Stack<char>());
+                        stacks2.Add(new Stack<char>());
+                    }
                 }
 
                 if (rearrangementSection)
@@ -67,17 +72,43 @@ namespace AdventOfCode2022
                     if (line[col] == '[')
                     {
                         stacks[col / 4].Push(line[col+1]);
+                        stacks2[col / 4].Push(line[col+1]);
                     }
                 }
             }
+            #endregion
 
             // Execute the moving of the containers
+            
+            // Part1
             foreach (var direction in from direction in directions from _ in Enumerable.Range(0, direction.Quantity) select direction)
             {
                 stacks[direction.Dest - 1].Push(stacks[direction.Source - 1].Pop());
             }
+            
+            // Part2
+            foreach (var direction in directions)
+            {
+                // Use a temporary list to hold the reverse order of the popping
+                var temp = new List<char>(direction.Quantity);
+                foreach (var _ in Enumerable.Range(0, direction.Quantity))
+                {
+                    temp.Insert(0, stacks2[direction.Source - 1].Pop());  // [D][N][Z] => { Z N D }
+                }
 
-            // Create the message by looking at the top container in each stack
+                foreach (var ch in temp)
+                {
+                    stacks2[direction.Dest - 1].Push(ch);
+                }
+            }
+
+            // Create the messages by looking at the top container in each stack
+            Console.WriteLine($"Part 1: The message is {TopOfStacksToMessage(stacks)}");   // QPJPLMNNR
+            Console.WriteLine($"Part 2: The message is {TopOfStacksToMessage(stacks2)}");  // BQDNWJPVJ
+        }
+
+        private static string TopOfStacksToMessage(List<Stack<char>> stacks)
+        {
             var message = string.Empty;
             foreach (var stack in stacks)
             {
@@ -87,7 +118,7 @@ namespace AdventOfCode2022
                 }
             }
 
-            Console.WriteLine($"Part 1: The message is {message}");   // QPJPLMNNR
+            return message;
         }
     }
 }
