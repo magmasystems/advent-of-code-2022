@@ -21,6 +21,10 @@
 
         private static int GetStartOfPacketMarkerPosition(string line, int markerLength)
         {
+            // We can use the Substring() function to create a "sliding window",
+            // but I don't want the huge amount of memory allocations. So, just
+            // use one array and slide the input down on each iteration.
+
             var queue = new char[markerLength];
             for (var index = 0; index < line.Length; index++)
             {
@@ -33,7 +37,7 @@
 
                 // Test for duplicates
                 var set = new HashSet<char>(queue);
-                if (set.Count != markerLength == false)
+                if (set.Count == markerLength)
                     return index+1;
             }
 
