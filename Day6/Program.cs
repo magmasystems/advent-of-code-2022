@@ -24,8 +24,6 @@ namespace AdventOfCode2022
         private static int GetStartOfPacketMarkerPosition(string line, int markerLength)
         {
             var queue = new char[markerLength];
-            var bv = new BitArray(128);
-            
             for (var index = 0; index < line.Length; index++)
             {
                 // Shift the array over one character to the right
