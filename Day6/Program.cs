@@ -36,16 +36,8 @@ namespace AdventOfCode2022
                     continue;
 
                 // Test for duplicates
-                var duplicates = false;
-                bv.SetAll(false);
-                for (var i = 0; i < queue.Length && duplicates == false; i++)
-                {
-                    if (bv[queue[i]])
-                        duplicates = true;
-                    bv[queue[i]] = true;
-                }
-
-                if (duplicates == false)
+                var set = new HashSet<char>(queue);
+                if (set.Count != markerLength == false)
                     return index+1;
             }
 
