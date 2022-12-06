@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-namespace AdventOfCode2022
+﻿namespace AdventOfCode2022
 {
     internal static class Program
     {
