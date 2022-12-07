@@ -12,11 +12,18 @@
             CurrentNode = FileSystem;
             BuildFileSystem(input);
             CalculateSizes(FileSystem);
-            
+
             // Part 1
             uint sumOfSizes = 0;
             FindDirectoriesWithSizeBelow100001(FileSystem, ref sumOfSizes);
             Console.WriteLine($"Part 1: The sum of the directory sizes is {sumOfSizes}"); // 1743217
+
+            // Part 2
+            const uint TOTAL_DISK_SPACE = 70000000;
+            const uint FREE_DISK_SPACE_NEEDED = 30000000;
+            var diskSpaceToBeFreed = FREE_DISK_SPACE_NEEDED - (TOTAL_DISK_SPACE - FileSystem.DirectorySize);
+            var nodeList = GetSmallestDirectoryWithSpaceAbove(FileSystem, diskSpaceToBeFreed, new List<Node>());
+            Console.WriteLine($"Part 2: The directory size to be deleted is {nodeList.Min(n => n.DirectorySize)}"); // 8319096
         }
 
         private static void BuildFileSystem(string[] input)
@@ -95,32 +102,17 @@
 
             sum += node.DirectorySize <= 100000 ? node.DirectorySize : 0;
         }
-    }
-
-    internal class Node
-    {
-        public string Name { get; init; }
-        public bool IsDirectory { get; init; }
-        public uint Size { get; init; }
-        public uint DirectorySize { get; set; }
-
-        public List<Node> Children { get; } = new();
-        public Node? Parent { get; init; }
-
-        public void Add(Node node)
+        
+        private static List<Node> GetSmallestDirectoryWithSpaceAbove(Node node, uint diskSpaceToBeFreed, List<Node> nodeList)
         {
-            this.Children.Add(node);
-        }
-
-        public Node FindDirectory(string directory, Node currentNode)
-        {
-            if (directory == "..")
+            foreach (var child in node.Children.Where(ch => ch.IsDirectory))
             {
-                return currentNode.Parent ?? currentNode;
+                GetSmallestDirectoryWithSpaceAbove(child, diskSpaceToBeFreed, nodeList);
             }
 
-            var directoryNode = currentNode.Children.FirstOrDefault(n => n.Name.Equals(directory));
-            return directoryNode ?? currentNode;
+            if (node.DirectorySize >= diskSpaceToBeFreed)
+                nodeList.Add(node);
+            return nodeList;
         }
     }
 }
