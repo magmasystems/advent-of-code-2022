@@ -4,8 +4,7 @@ internal class Node
 {
     public string Name { get; init; }
     public bool IsDirectory { get; init; }
-    public uint Size { get; init; }
-    public uint DirectorySize { get; set; }
+    public uint Size { get; set; }
 
     public List<Node> Children { get; } = new();
     public Node? Parent { get; init; }

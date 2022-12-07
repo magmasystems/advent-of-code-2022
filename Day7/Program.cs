@@ -21,9 +21,9 @@
             // Part 2
             const uint TOTAL_DISK_SPACE = 70000000;
             const uint FREE_DISK_SPACE_NEEDED = 30000000;
-            var diskSpaceToBeFreed = FREE_DISK_SPACE_NEEDED - (TOTAL_DISK_SPACE - FileSystem.DirectorySize);
+            var diskSpaceToBeFreed = FREE_DISK_SPACE_NEEDED - (TOTAL_DISK_SPACE - FileSystem.Size);
             var nodeList = GetSmallestDirectoryWithSpaceAbove(FileSystem, diskSpaceToBeFreed, new List<Node>());
-            Console.WriteLine($"Part 2: The directory size to be deleted is {nodeList.Min(n => n.DirectorySize)}"); // 8319096
+            Console.WriteLine($"Part 2: The directory size to be deleted is {nodeList.Min(n => n.Size)}"); // 8319096
         }
 
         private static void BuildFileSystem(string[] input)
@@ -86,8 +86,8 @@
             
             if (node.IsDirectory)
             {
-                node.DirectorySize = node.Children.Aggregate<Node?, uint>(0, (current, child) => current + CalculateSizes(child));
-                return node.DirectorySize;
+                node.Size = node.Children.Aggregate<Node?, uint>(0, (current, child) => current + CalculateSizes(child));
+                return node.Size;
             }
 
             return node.Size;
@@ -100,7 +100,7 @@
                 FindDirectoriesWithSizeBelow100001(child, ref sum);
             }
 
-            sum += node.DirectorySize <= 100000 ? node.DirectorySize : 0;
+            sum += node.Size <= 100000 ? node.Size : 0;
         }
         
         private static List<Node> GetSmallestDirectoryWithSpaceAbove(Node node, uint diskSpaceToBeFreed, List<Node> nodeList)
@@ -110,7 +110,7 @@
                 GetSmallestDirectoryWithSpaceAbove(child, diskSpaceToBeFreed, nodeList);
             }
 
-            if (node.DirectorySize >= diskSpaceToBeFreed)
+            if (node.Size >= diskSpaceToBeFreed)
                 nodeList.Add(node);
             return nodeList;
         }
