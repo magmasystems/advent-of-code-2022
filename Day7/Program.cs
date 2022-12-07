@@ -2,8 +2,8 @@
 {
     internal static class Program
     {
-        private static readonly Node FileSystem = new() { Name = "/", IsDirectory = true };
-        private static Node CurrentNode { get; set; } = null!;
+        private static readonly INode FileSystem = new() { Name = "/", IsDirectory = true };
+        private static INode CurrentNode { get; set; } = null!;
 
         private static void Main(string[] args)
         {
@@ -22,7 +22,7 @@
             const uint TOTAL_DISK_SPACE = 70000000;
             const uint FREE_DISK_SPACE_NEEDED = 30000000;
             var diskSpaceToBeFreed = FREE_DISK_SPACE_NEEDED - (TOTAL_DISK_SPACE - FileSystem.Size);
-            var nodeList = GetSmallestDirectoryWithSpaceAbove(FileSystem, diskSpaceToBeFreed, new List<Node>());
+            var nodeList = GetSmallestDirectoryWithSpaceAbove(FileSystem, diskSpaceToBeFreed, new List<INode>());
             Console.WriteLine($"Part 2: The directory size to be deleted is {nodeList.Min(n => n.Size)}"); // 8319096
         }
 
@@ -67,33 +67,33 @@
                 if (parts[0].ToLower() == "dir")
                 {
                     // Add a directory node under the current location
-                    CurrentNode.Add(new Node { Name = parts[1], IsDirectory = true, Size = 0, Parent = CurrentNode });
+                    CurrentNode.Add(new INode { Name = parts[1], IsDirectory = true, Size = 0, Parent = CurrentNode });
                 }
                 else
                 {
                     // Add a file node under the current location
-                    CurrentNode.Add(new Node { Name = parts[1], IsDirectory = false, Size = Convert.ToUInt32(parts[0]) });
+                    CurrentNode.Add(new INode { Name = parts[1], IsDirectory = false, Size = Convert.ToUInt32(parts[0]) });
                 }
             }
 
             return lineNum - 1;
         }
 
-        private static uint CalculateSizes(Node? node)
+        private static uint CalculateSizes(INode node)
         {
             if (node == null)
                 return 0;
             
             if (node.IsDirectory)
             {
-                node.Size = node.Children.Aggregate<Node?, uint>(0, (current, child) => current + CalculateSizes(child));
+                node.Size = node.Children.Aggregate<INode?, uint>(0, (current, child) => current + CalculateSizes(child));
                 return node.Size;
             }
 
             return node.Size;
         }
         
-        private static void FindDirectoriesWithSizeBelow100001(Node node, ref uint sum)
+        private static void FindDirectoriesWithSizeBelow100001(INode node, ref uint sum)
         {
             foreach (var child in node.Children.Where(ch => ch.IsDirectory))
             {
@@ -103,7 +103,7 @@
             sum += node.Size <= 100000 ? node.Size : 0;
         }
         
-        private static List<Node> GetSmallestDirectoryWithSpaceAbove(Node node, uint diskSpaceToBeFreed, List<Node> nodeList)
+        private static List<INode> GetSmallestDirectoryWithSpaceAbove(INode node, uint diskSpaceToBeFreed, List<INode> nodeList)
         {
             foreach (var child in node.Children.Where(ch => ch.IsDirectory))
             {

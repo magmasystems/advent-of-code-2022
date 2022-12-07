@@ -1,20 +1,20 @@
 namespace AdventOfCode2022;
 
-internal class Node
+internal class INode
 {
     public string Name { get; init; }
     public bool IsDirectory { get; init; }
     public uint Size { get; set; }
 
-    public List<Node> Children { get; } = new();
-    public Node? Parent { get; init; }
+    public List<INode> Children { get; } = new();
+    public INode Parent { get; init; }
 
-    public void Add(Node node)
+    public void Add(INode node)
     {
         this.Children.Add(node);
     }
 
-    public Node FindDirectory(string directory, Node currentNode)
+    public INode FindDirectory(string directory, INode currentNode)
     {
         if (directory == "..")
         {
