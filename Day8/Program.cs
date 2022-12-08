@@ -102,11 +102,7 @@
             }
             scores[3] = c >= numCols ? score : score+1;
 
-            score = 1;
-            foreach (var t in scores)
-                score *= t;
-
-            return score;
+            return scores.ToList().Aggregate(1, (current, t) => current * t);
         }
     }
 }
