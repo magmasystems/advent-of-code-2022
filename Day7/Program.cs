@@ -86,7 +86,7 @@
             
             if (node.IsDirectory)
             {
-                node.Size = node.Children.Aggregate<INode?, uint>(0, (current, child) => current + CalculateSizes(child));
+                node.Size = node.Children.Aggregate<INode, uint>(0, (current, child) => current + CalculateSizes(child));
                 return node.Size;
             }
 
