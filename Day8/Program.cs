@@ -34,6 +34,18 @@
             }
 
             Console.WriteLine($"Part 1: The number of trees that are visible are {numVisible}");  // 1854
+            
+            // Part 2
+            var scenicScores = new List<int>();
+            for (var row = 1; row < numRows - 1; row++)
+            {
+                for (var col = 1; col < numCols - 1; col++)
+                {
+                    scenicScores.Add(GetViewingArea(grid, row, col, numRows, numCols));
+                }
+            }
+            
+            Console.WriteLine($"Part 2: The max viewing area is {scenicScores.Max()}");         // 527340
         }
 
         private static bool IsTreeVisible(int[,] grid, int row, int col, int numRows, int numCols)
@@ -75,22 +87,56 @@
             return false;
         }
         
-        public static IEnumerable<T> SliceRow<T>(this T[,] array, int row, int colToExclude = -1)
+        private static int GetViewingArea(int[,] grid, int row, int col, int numRows, int numCols)
         {
-            for (var col = 0; col < array.GetLength(1); col++)
+            var tree = grid[row,col];
+            var scores = new int[4];
+            
+            // Check up
+            var score = 0;
+            for (var r = row-1; r >= 0; r--)
             {
-                if (colToExclude == -1 || col != colToExclude)
-                    yield return array[row, col];
+                score++;
+                if (grid[r, col] >= tree)
+                    break;
             }
-        }
-        
-        public static IEnumerable<T> SliceColumn<T>(this T[,] array, int col, int rowToExclude = -1)
-        {
-            for (var row = 0; row < array.GetLength(0); row++)
+            scores[0] = score;
+            
+            // Check down
+            score = 0;
+            for (var r = row+1; r < numRows; r++)
             {
-                if (rowToExclude == -1 || row != rowToExclude)
-                    yield return array[row, col];
+                score++;
+                if (grid[r, col] >= tree)
+                    break;
             }
+            scores[1] = score;
+            
+            // Check left
+            score = 0;
+            for (var c = col-1; c >= 0; c--)
+            {
+                score++;
+                if (grid[row, c] >= tree)
+                    break;
+            }
+            scores[2] = score;
+            
+            // Check right
+            score = 0;
+            for (var c = col+1; c < numCols; c++)
+            {
+                score++;
+                if (grid[row, c] >= tree)
+                    break;
+            }
+            scores[3] = score;
+
+            score = 1;
+            for (var i = 0; i < 4; i++)
+                score *= scores[i];
+            return score;
         }
+
     }
 }
