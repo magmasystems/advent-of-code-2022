@@ -110,8 +110,9 @@
             scores[3] = score;
 
             score = 1;
-            for (var i = 0; i < 4; i++)
-                score *= scores[i];
+            foreach (var t in scores)
+                score *= t;
+
             return score;
         }
     }
