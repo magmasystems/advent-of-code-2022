@@ -68,46 +68,39 @@
         {
             var tree = grid[row,col];
             var scores = new int[4];
+            int r, c;
             
             // Check up
             var score = 0;
-            for (var r = row-1; r >= 0; r--)
+            for (r = row-1; r >= 0 && grid[r, col] < tree; r--)
             {
                 score++;
-                if (grid[r, col] >= tree)
-                    break;
             }
-            scores[0] = score;
+            scores[0] = r < 0 ? score : score+1;
             
             // Check down
             score = 0;
-            for (var r = row+1; r < numRows; r++)
+            for (r = row+1; r < numRows && grid[r, col] < tree; r++)
             {
                 score++;
-                if (grid[r, col] >= tree)
-                    break;
             }
-            scores[1] = score;
+            scores[1] = r >= numRows ? score : score+1;
             
             // Check left
             score = 0;
-            for (var c = col-1; c >= 0; c--)
+            for (c = col-1; c >= 0 && grid[row, c] < tree; c--)
             {
                 score++;
-                if (grid[row, c] >= tree)
-                    break;
             }
-            scores[2] = score;
+            scores[2] = c < 0 ? score : score+1;
             
             // Check right
             score = 0;
-            for (var c = col+1; c < numCols; c++)
+            for (c = col+1; c < numCols && grid[row, c] < tree; c++)
             {
                 score++;
-                if (grid[row, c] >= tree)
-                    break;
             }
-            scores[3] = score;
+            scores[3] = c >= numCols ? score : score+1;
 
             score = 1;
             foreach (var t in scores)
