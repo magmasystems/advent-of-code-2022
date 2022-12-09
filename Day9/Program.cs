@@ -21,7 +21,7 @@ namespace AdventOfCode2022
                 // The tail visited the starting point
                 PointsVisited.Add(PointT);
 
-                var offset = GetOffset(parts[0][0]);
+                var offset = GetOffsetFromDirection(parts[0][0]);
                 foreach (var _ in Enumerable.Range(0, numMoves))
                 {
                     PointH.Offset(offset);
@@ -52,7 +52,7 @@ namespace AdventOfCode2022
             return pointT;
         }
 
-        private static Point GetOffset(char direction)
+        private static Point GetOffsetFromDirection(char direction)
         {
             return char.ToUpper(direction) switch
             {
@@ -66,12 +66,7 @@ namespace AdventOfCode2022
         
         private static Point GetDiagonalMove(Point pointH, Point pointT)
         {
-            var offset = new Point(1, 1);
-            if (pointH.Y < pointT.Y)
-                offset.Y = -1;
-            if (pointH.X < pointT.X)
-                offset.X = -1;
-            return offset;
+            return new Point(pointH.X < pointT.X ? -1 : 1, pointH.Y < pointT.Y ? -1 : 1);
         }
     }
 }
