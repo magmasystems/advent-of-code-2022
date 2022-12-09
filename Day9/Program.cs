@@ -26,8 +26,7 @@ namespace AdventOfCode2022
                 {
                     PointH.Offset(offset);
                     PointT = MoveTail(PointH, PointT, offset);
-                    if (!PointsVisited.Contains(PointT))
-                        PointsVisited.Add(PointT);
+                    PointsVisited.Add(PointT);
                     // Console.WriteLine($"Head [{PointH.X}, {PointH.Y}] - Tail [{PointT.X}, {PointT.Y}]");
                 }
                 // Console.WriteLine("----------------------------------\n");
