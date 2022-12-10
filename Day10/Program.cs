@@ -28,15 +28,15 @@
                 switch (parts[0].ToLower())
                 {
                     case "noop":
-                        cycle++;
+                        cycles[idxInstruction].Cycle = ++cycle;
                         break;
                     case "addx":
                         cycle += 2;
                         cycles[idxInstruction].Cycle = cycle;
                         cycles[idxInstruction].V = Convert.ToInt32(parts[1]);
-                        idxInstruction++;
                         break;
                 }
+                idxInstruction++;
             }
 
             // Find the signal strength during the 20th, 60th, 100th, 140th, 180th, and 220th cycles.
