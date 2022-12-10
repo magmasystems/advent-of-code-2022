@@ -15,8 +15,6 @@
         
         private static void Main(string[] args)
         {
-            const int MAX_CYCLE_TO_TEST = 220;
-
             var input = File.ReadAllLines(args.Length > 0 ? args[0] : "Input.txt");
 
             // Part 1
@@ -30,7 +28,7 @@
                 switch (parts[0].ToLower())
                 {
                     case "noop":
-                        cycles[idxInstruction].Cycle = ++cycle;
+                        cycle++;
                         break;
                     case "addx":
                         cycle += 2;
@@ -58,7 +56,9 @@
                 // Console.WriteLine($"Cycle: {testPoint}, Register: {register}, Accumulator: {acc}");
             }
             
-            Console.WriteLine($"Part 1: The sum is {sumOfSignalStrengths}"); //
+            Console.WriteLine($"Part 1: The sum is {sumOfSignalStrengths}"); // 15140
+            
+            // Part 2
         }
     }
 }
