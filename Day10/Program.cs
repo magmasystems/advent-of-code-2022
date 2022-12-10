@@ -34,11 +34,9 @@
                         cycle += 2;
                         cycles[idxInstruction].Cycle = cycle;
                         cycles[idxInstruction].V = Convert.ToInt32(parts[1]);
+                        idxInstruction++;
                         break;
                 }
-                
-                // Console.WriteLine($"[{x}] {cycles[x]}");
-                idxInstruction++;
             }
 
             // Find the signal strength during the 20th, 60th, 100th, 140th, 180th, and 220th cycles.
