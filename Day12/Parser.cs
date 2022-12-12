@@ -1,6 +1,6 @@
 namespace AdventOfCode2022;
 
-public class Parser
+public static class Parser
 {
     public static NodeInfo[,] ParseInput(string[] args, out NodeInfo startNode, out NodeInfo endNode)
     {
@@ -53,6 +53,12 @@ public class Parser
         {
             node.Adjacent.Add(neighbor);
             neighbor.Adjacent.Add(node);
+        }
+        
+        if (neighbor.Height >= node.Height)
+        {
+            if (!neighbor.Adjacent.Contains(node)) 
+                neighbor.Adjacent.Add(node);
         }
     }
 }
