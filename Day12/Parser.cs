@@ -49,6 +49,35 @@ public static class Parser
 
     private static void AddNeighbor(NodeInfo node, NodeInfo neighbor)
     {
+        // a b q
+        // e f r
+        // node = q, neighbor = b
+        //   q >= b    q -> b
+        //   b+1 < q so don't link b to q
+
+        if (node.Height == neighbor.Height)
+        {
+            node.Adjacent.Add(neighbor);
+            neighbor.Adjacent.Add(node);
+        }
+        else if (Math.Abs(neighbor.Height - node.Height) == 1)
+        {
+            node.Adjacent.Add(neighbor);
+            neighbor.Adjacent.Add(node);
+        }
+        else if (neighbor.Height > node.Height)
+        {
+            neighbor.Adjacent.Add(node);
+        }
+        
+        /*
+        if (node.Height >= neighbor.Height)
+            node.Adjacent.Add(neighbor);
+        if (neighbor.Height == node.Height || neighbor.Height == node.Height-1)
+            neighbor.Adjacent.Add(node);
+            */
+        
+        /*
         if (Math.Abs(neighbor.Height - node.Height) <= 1)
         {
             node.Adjacent.Add(neighbor);
@@ -59,6 +88,31 @@ public static class Parser
         {
             if (!neighbor.Adjacent.Contains(node)) 
                 neighbor.Adjacent.Add(node);
+        }
+        */
+    }
+
+    public static void DumpMatrix(NodeInfo[,] matrix)
+    {
+        MatrixAction(matrix, (node, row, col) =>
+        {
+            Console.WriteLine($"{node.Name}: {node.Height}");
+            foreach (var n in node.Adjacent)
+            {
+                Console.WriteLine($"  {n.Name}, {n.Height}");
+            }
+            Console.WriteLine();
+        });
+    }
+
+    public static void MatrixAction(NodeInfo[,] matrix, Action<NodeInfo, int, int> callback)
+    {
+        for (var row = 0; row < matrix.GetLength(0); row++)
+        {
+            for (var col = 0; col < matrix.GetLength(1); col++)
+            {
+                callback?.Invoke(matrix[row, col], row, col);
+            }  
         }
     }
 }

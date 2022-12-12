@@ -10,17 +10,24 @@
         private static void Main(string[] args)
         {
             Matrix = Parser.ParseInput(args, out StartNode, out EndNode);
+            // Parser.DumpMatrix(Matrix);
+            
+            var minLength = FindMinimumPath(out var minPath);
+            Console.WriteLine($"Part 1: Length is {minLength} and path is {minPath}"); // 
+        }
 
+        private static int FindMinimumPath(out string minPath)
+        {
             foreach (var node in StartNode.Adjacent)
             {
                 var visited = new int[Matrix.GetLength(0) * Matrix.GetLength(1)];
                 visited[StartNode.Index] = 1;
-                
+
                 FindPaths(node, visited, new string(StartNode.Name));
             }
 
             var minLength = int.MaxValue;
-            var minPath = string.Empty;
+            minPath = string.Empty;
 
             foreach (var path in FoundPaths)
             {
@@ -32,10 +39,9 @@
                 }
             }
 
-            // Part 1
-            Console.WriteLine($"Part 1: Length is {minLength} and path is {minPath}"); // 
+            return minLength;
         }
-        
+
         private static void FindPaths(NodeInfo node, int[] visited, string path)
         {
             // Success if we reached the end node
@@ -55,6 +61,7 @@
 
             path += $"|{node.Name}";
             visited[node.Index] = 1;
+            //Console.WriteLine(path);
 
             // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
             foreach (var node2 in node.Adjacent)
