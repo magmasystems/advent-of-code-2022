@@ -61,7 +61,7 @@
 
             path += $"|{node.Name}";
             visited[node.Index] = 1;
-            //Console.WriteLine(path);
+            Console.WriteLine(path);
 
             // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
             foreach (var node2 in node.Adjacent)
