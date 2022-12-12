@@ -2,27 +2,6 @@
 {
     internal static class Program
     {
-        private class NodeInfo
-        {
-            public string Name { get; set; }
-            public int Height { get; }
-            public readonly List<NodeInfo> Adjacent = new();
-            public int Index { get; }
-            private static int Counter;
-
-            public NodeInfo(char name)
-            {
-                this.Name = name.ToString();
-                this.Index = Counter++;
-                this.Height = name switch
-                {
-                    'S' => 0,
-                    'E' => 25,
-                    _ => name - 'a'
-                };
-            }
-        }
-        
         private static NodeInfo[,] Matrix;
         private static NodeInfo StartNode;
         private static NodeInfo EndNode;
@@ -30,7 +9,7 @@
         
         private static void Main(string[] args)
         {
-            ParseInput(args);
+            Matrix = Parser.ParseInput(args, out StartNode, out EndNode);
 
             foreach (var node2 in StartNode.Adjacent)
             {
@@ -84,55 +63,6 @@
                 FindPaths(node2, visited, path);
                 
                 Array.Copy(oldVisited, 0, visited, 0, visited.Length);    
-            }
-        }
-
-        private static void ParseInput(string[] args)
-        {
-            var input = File.ReadAllLines(args.Length > 0 ? args[0] : "Input2.txt");
-
-            Matrix = new NodeInfo[input.Length, input[0].Length];
-
-            for (var row = 0; row < input.Length; row++)
-            {
-                var line = input[row];
-                for (var col = 0; col < line.Length; col++)
-                {
-                    var node = new NodeInfo(line[col]);
-                    node.Name = $"{node.Name}:[{row}, {col}]";
-                    Matrix[row, col] = node;
-
-                    switch (line[col])
-                    {
-                        case 'S':
-                            StartNode = node;
-                            break;
-                        case 'E':
-                            EndNode = node;
-                            break;
-                    }
-
-                    // Up
-                    if (row > 0)
-                    {
-                        AddNeighbor(node, Matrix[row - 1, col]);
-                    }
-
-                    // Left
-                    if (col > 0)
-                    {
-                        AddNeighbor(node, Matrix[row, col - 1]);
-                    }
-                }
-            }
-        }
-
-        private static void AddNeighbor(NodeInfo node, NodeInfo neighbor)
-        {
-            if (Math.Abs(neighbor.Height - node.Height) <= 1)
-            {
-                node.Adjacent.Add(neighbor);
-                neighbor.Adjacent.Add(node);
             }
         }
     }
