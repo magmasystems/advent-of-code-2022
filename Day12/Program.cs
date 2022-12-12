@@ -6,11 +6,13 @@
         private static NodeInfo StartNode;
         private static NodeInfo EndNode;
         private static readonly HashSet<string> FoundPaths = new();
+
+        private static readonly bool UseBFS = true;
         
         private static void Main(string[] args)
         {
             Matrix = Parser.ParseInput(args, out StartNode, out EndNode);
-            // Parser.DumpMatrix(Matrix);
+            //Parser.DumpMatrix(Matrix);
             
             var minLength = FindMinimumPath(out var minPath);
             Console.WriteLine($"Part 1: Length is {minLength} and path is {minPath}"); // 
@@ -18,12 +20,19 @@
 
         private static int FindMinimumPath(out string minPath)
         {
-            foreach (var node in StartNode.Adjacent)
+            if (UseBFS)
             {
-                var visited = new int[Matrix.GetLength(0) * Matrix.GetLength(1)];
-                visited[StartNode.Index] = 1;
+                BFS();
+            }
+            else
+            {
+                foreach (var node in StartNode.Adjacent)
+                {
+                    var visited = new int[Matrix.GetLength(0) * Matrix.GetLength(1)];
+                    visited[StartNode.Index] = 1;
 
-                FindPaths(node, visited, new string(StartNode.Name));
+                    FindPaths(node, visited, new string(StartNode.Name));
+                }
             }
 
             var minLength = int.MaxValue;
@@ -40,6 +49,36 @@
             }
 
             return minLength;
+        }
+
+        private static void BFS()
+        {
+            var visited = new bool[Matrix.GetLength(0) * Matrix.GetLength(1)];
+            var path = string.Empty;
+            var queue = new Queue<NodeInfo>();
+            queue.Enqueue(StartNode);
+
+            while (queue.Count > 0)
+            {
+                var node = queue.Dequeue();
+                if (visited[node.Index])
+                    continue;
+                
+                path += $"|{node.Name}";
+                visited[node.Index] = true;
+                
+                if (node == EndNode)
+                {
+                    FoundPaths.Add(path);
+                    Console.WriteLine(path);
+                    return;
+                }
+                
+                foreach (var child in node.Adjacent.Where(child => !visited[child.Index]))
+                {
+                    queue.Enqueue(child);
+                }
+            }
         }
 
         private static void FindPaths(NodeInfo node, int[] visited, string path)
@@ -61,7 +100,7 @@
 
             path += $"|{node.Name}";
             visited[node.Index] = 1;
-            Console.WriteLine(path);
+            //Console.WriteLine($"{path}");
 
             // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
             foreach (var node2 in node.Adjacent)

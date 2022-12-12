@@ -1,3 +1,5 @@
+using System.Drawing;
+
 namespace AdventOfCode2022;
 
 public static class Parser
@@ -29,22 +31,40 @@ public static class Parser
                         endNode = node;
                         break;
                 }
-
-                // Up
-                if (row > 0)
-                {
-                    AddNeighbor(node, matrix[row - 1, col]);
-                }
-
-                // Left
-                if (col > 0)
-                {
-                    AddNeighbor(node, matrix[row, col - 1]);
-                }
+            }
+        }
+        
+        for (var row = 0; row < matrix.GetLength(0); row++)
+        {
+            for (var col = 0; col < matrix.GetLength(1); col++)
+            {
+                AddAdjacency(matrix, row, col);
             }
         }
 
         return matrix;
+    }
+
+    private static void AddAdjacency(NodeInfo[,] matrix, int row, int col)
+    {
+        var node = matrix[row, col];
+        Point[] offsets = { new(-1, 0), new(1, 0), new(0, -1), new(0, 1) };
+
+        foreach (var offset in offsets)
+        {
+            Point origin = new(row, col);
+            origin.Offset(offset);
+            if (origin.X < 0 || origin.Y < 0 || origin.X >= matrix.GetLength(0) || origin.Y >= matrix.GetLength(1))
+                continue;
+            var neighbor = matrix[origin.X, origin.Y];
+            if (Math.Abs(node.Height - neighbor.Height) <= 1)
+            {
+                if (!node.Adjacent.Contains(neighbor))
+                    node.Adjacent.Add(neighbor);
+                if (!neighbor.Adjacent.Contains(node))
+                    neighbor.Adjacent.Add(node);
+            }
+        }
     }
 
     private static void AddNeighbor(NodeInfo node, NodeInfo neighbor)
@@ -60,14 +80,13 @@ public static class Parser
             node.Adjacent.Add(neighbor);
             neighbor.Adjacent.Add(node);
         }
-        else if (Math.Abs(neighbor.Height - node.Height) == 1)
+        else if (node.Height == neighbor.Height+1)
         {
-            node.Adjacent.Add(neighbor);
             neighbor.Adjacent.Add(node);
         }
         else if (neighbor.Height > node.Height)
         {
-            neighbor.Adjacent.Add(node);
+            //neighbor.Adjacent.Add(node);
         }
         
         /*
