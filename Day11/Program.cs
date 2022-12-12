@@ -51,7 +51,7 @@
             // Reset the initial state
             Monkeys = new List<Monkey>();
             ParseInput(inputFile);
-            NUM_ROUNDS = 1000;
+            NUM_ROUNDS = 10000;
 
             var BigMonkeys = Monkeys.Select(m => new BigMonkey(m)).ToList();
 
