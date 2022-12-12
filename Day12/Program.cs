@@ -11,10 +11,12 @@
         {
             Matrix = Parser.ParseInput(args, out StartNode, out EndNode);
 
-            foreach (var node2 in StartNode.Adjacent)
+            foreach (var node in StartNode.Adjacent)
             {
                 var visited = new int[Matrix.GetLength(0) * Matrix.GetLength(1)];
-                FindPaths(node2, visited, new string(StartNode.Name));
+                visited[StartNode.Index] = 1;
+                
+                FindPaths(node, visited, new string(StartNode.Name));
             }
 
             var minLength = int.MaxValue;
@@ -46,7 +48,7 @@
             }
             
             // Don't visit a node twice
-            if (node == StartNode || visited[node.Index] == 1)
+            if (visited[node.Index] == 1)
             {
                 return;
             }
