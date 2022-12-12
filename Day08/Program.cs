@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode2022
+﻿using AdventOfCode.Utils;
+
+namespace AdventOfCode2022
 {
     internal static class Program
     {

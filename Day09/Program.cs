@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using AdventOfCode.Utils;
 
 namespace AdventOfCode2022
 {

@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace AdventOfCode2022;
+namespace AdventOfCode.Utils;
 
 public static class PointUtils
 {
